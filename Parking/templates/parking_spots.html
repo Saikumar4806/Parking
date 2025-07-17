@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Parking Spots for {{ lot.name }}</h2>
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>Spot ID</th>
+      <th>Status</th>
+      <th>Occupied By</th>
+      <th>Parking Time</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for spot in spots %}
+    <tr>
+      <td>{{ spot.id }}</td>
+      <td>{% if spot.status == 'A' %}<span class="text-success">Available</span>{% else %}<span class="text-danger">Occupied</span>{% endif %}</td>
+      <td>
+        {% if spot.status == 'O' %}
+            {% set active_reservation = spot.reservations|selectattr('leaving_timestamp', '==', none)|first %}
+            {% if active_reservation %}
+                {{ active_reservation.user.username }}
+            {% else %}
+                N/A (Stuck)
+            {% endif %}
+        {% else %}
+            -
+        {% endif %}
+      </td>
+      <td>
+        {% if spot.status == 'O' %}
+            {% set active_reservation = spot.reservations|selectattr('leaving_timestamp', '==', none)|first %}
+            {% if active_reservation %}
+                {{ active_reservation.parking_timestamp.strftime('%Y-%m-%d %H:%M') }}
+            {% else %}
+                -
+            {% endif %}
+        {% else %}
+            -
+        {% endif %}
+      </td>
+      <td>
+        {% if spot.status == 'O' %}
+            {% set active_reservation = spot.reservations|selectattr('leaving_timestamp', '==', none)|first %}
+            {% if active_reservation %}
+            <form action="{{ url_for('main.admin_force_release', reservation_id=active_reservation.id) }}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Force release this spot?')">Force Release</button>
+            </form>
+            {% endif %}
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-secondary">Back</a>
+{% endblock %} 

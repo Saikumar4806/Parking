@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Admin Dashboard</h2>
+<div class="mb-4">
+  <a href="{{ url_for('main.add_lot') }}" class="btn btn-success">Add Parking Lot</a>
+</div>
+<h4>Parking Lots</h4>
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Price (per hour)</th>
+      <th>Address</th>
+      <th>Pin Code</th>
+      <th>Max Spots</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for lot in lots %}
+    <tr>
+      <td>{{ lot.name }}</td>
+      <td>{{ lot.price }}</td>
+      <td>{{ lot.address }}</td>
+      <td>{{ lot.pin_code }}</td>
+      <td>{{ lot.max_spots }}</td>
+      <td>
+        <a href="{{ url_for('main.view_spots', lot_id=lot.id) }}" class="btn btn-info btn-sm">View Spots</a>
+        <a href="{{ url_for('main.edit_lot', lot_id=lot.id) }}" class="btn btn-warning btn-sm">Edit</a>
+        <form action="{{ url_for('main.delete_lot', lot_id=lot.id) }}" method="post" style="display:inline;">
+          <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this lot?')">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<h4>Registered Users</h4>
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>Username</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in users %}
+    <tr>
+      <td>{{ user.username }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %} 
